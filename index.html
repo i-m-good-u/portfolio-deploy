@@ -5,6 +5,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Guddu Kumar | Software Developer</title>
     <meta name="description" content="Portfolio of Guddu Kumar, a passionate Software Developer from Bengaluru showcasing Java, Spring Boot projects and technical skills.">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💼</text></svg>">
+    
+    <!-- Open Graph Meta Tags for Social Media -->
+    <meta property="og:title" content="Guddu Kumar - Software Developer Portfolio">
+    <meta property="og:description" content="Passionate Software Developer specializing in Java, Spring Boot, and backend development from Bengaluru">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://guddu-kumar-portfolio.netlify.app">
+    <meta property="og:image" content="https://guddu-kumar-portfolio.netlify.app/preview.jpg">
+    
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Guddu Kumar - Software Developer Portfolio">
+    <meta name="twitter:description" content="Passionate Software Developer specializing in Java, Spring Boot, and backend development">
+    
+    <!-- Additional Meta Tags -->
+    <meta name="author" content="Guddu Kumar">
+    <meta name="keywords" content="Guddu Kumar, Software Developer, Java, Spring Boot, Backend Developer, Bengaluru, Portfolio">
+    
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -52,6 +72,9 @@
                 <div class="hero-buttons">
                     <a href="#projects" class="btn btn-primary">View My Work</a>
                     <a href="#contact" class="btn btn-secondary">Get In Touch</a>
+                    <a href="#" class="btn btn-outline" onclick="downloadResume()">
+                        <i class="fas fa-download"></i> Download Resume
+                    </a>
                 </div>
             </div>
             <div class="hero-image">
@@ -227,7 +250,7 @@
                         <a href="#" class="social-link"><i class="fas fa-code"></i></a>
                     </div>
                 </div>
-                <form class="contact-form">
+                <form class="contact-form" netlify>
                     <div class="form-group">
                         <input type="text" id="name" name="name" placeholder="Your Name" required>
                     </div>
@@ -252,6 +275,11 @@
             <p>&copy; 2024 Guddu Kumar. All rights reserved.</p>
         </div>
     </footer>
+
+    <!-- Back to Top Button -->
+    <button id="backToTop" class="back-to-top" aria-label="Back to top">
+        <i class="fas fa-chevron-up"></i>
+    </button>
 
     <script src="script.js"></script>
 </body>

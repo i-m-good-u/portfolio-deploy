@@ -344,5 +344,40 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
+// Back to top button functionality
+const backToTopButton = document.getElementById('backToTop');
+
+window.addEventListener('scroll', () => {
+    if (window.pageYOffset > 300) {
+        backToTopButton.classList.add('show');
+    } else {
+        backToTopButton.classList.remove('show');
+    }
+});
+
+backToTopButton.addEventListener('click', () => {
+    window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+    });
+});
+
+// Resume download functionality
+function downloadResume() {
+    // You can replace this with your actual resume URL
+    const resumeUrl = 'https://docs.google.com/document/d/1234567890/export?format=pdf'; // Replace with your Google Drive resume link
+    
+    // For now, we'll show a notification
+    showNotification('Resume download feature coming soon! Please contact me directly for my resume.', 'info');
+    
+    // Uncomment below when you have your resume ready
+    // const link = document.createElement('a');
+    // link.href = resumeUrl;
+    // link.download = 'Guddu_Kumar_Resume.pdf';
+    // document.body.appendChild(link);
+    // link.click();
+    // document.body.removeChild(link);
+}
+
 console.log('🚀 Portfolio website loaded successfully!');
 console.log('💼 Ready to showcase your amazing work!'); 
