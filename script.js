@@ -365,7 +365,7 @@ backToTopButton.addEventListener('click', () => {
 // Resume Management System
 class ResumeManager {
     constructor() {
-        this.adminPassword = 'your-secure-password-here';
+        this.adminPassword = 'admin123'; // Simple password for testing
         this.storageKey = 'portfolio_resume_data';
         this.init();
     }
@@ -427,6 +427,16 @@ class ResumeManager {
         const adminForm = document.getElementById('admin-login-form');
         if (adminForm) {
             adminForm.addEventListener('submit', (e) => this.handleAdminLogin(e));
+        }
+
+        // Close modal when clicking outside
+        const modal = document.getElementById('admin-login-modal');
+        if (modal) {
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    this.closeAdminLogin();
+                }
+            });
         }
     }
 
