@@ -40,6 +40,7 @@
                 <a href="#home" class="nav-link">Home</a>
                 <a href="#about" class="nav-link">About</a>
                 <a href="#projects" class="nav-link">Projects</a>
+                <a href="#resume" class="nav-link">Resume</a>
                 <a href="#contact" class="nav-link">Contact</a>
             </div>
             <div class="nav-toggle" id="nav-toggle">
@@ -217,6 +218,135 @@
             </div>
         </div>
     </section>
+
+    <!-- Resume Section -->
+    <section id="resume" class="resume">
+        <div class="container">
+            <h2 class="section-title">Resume</h2>
+            
+            <!-- Resume Download Section -->
+            <div class="resume-download-section">
+                <div class="resume-preview">
+                    <div class="resume-icon">
+                        <i class="fas fa-file-pdf"></i>
+                    </div>
+                    <div class="resume-info">
+                        <h3>Download My Resume</h3>
+                        <p>Get the latest version of my professional resume with all my skills, experience, and achievements.</p>
+                        <p class="resume-last-updated">Last updated: <span id="resume-last-updated">Not available</span></p>
+                    </div>
+                </div>
+                <div class="resume-actions">
+                    <button onclick="downloadCurrentResume()" class="btn btn-primary">
+                        <i class="fas fa-download"></i> Download Resume
+                    </button>
+                    <button onclick="viewResumeOnline()" class="btn btn-secondary">
+                        <i class="fas fa-eye"></i> View Online
+                    </button>
+                </div>
+            </div>
+
+            <!-- Admin Resume Upload Section (Password Protected) -->
+            <div class="resume-admin-section" id="resume-admin-section" style="display: none;">
+                <div class="admin-header">
+                    <h3><i class="fas fa-shield-alt"></i> Resume Management</h3>
+                    <button onclick="toggleAdminSection()" class="btn btn-outline btn-small">
+                        <i class="fas fa-times"></i> Close
+                    </button>
+                </div>
+                
+                <div class="admin-content">
+                    <div class="upload-section">
+                        <h4>Upload New Resume</h4>
+                        <div class="file-upload-area" id="file-upload-area">
+                            <div class="upload-icon">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                            </div>
+                            <p>Drag and drop your resume here or click to browse</p>
+                            <p class="file-info">Supported formats: PDF, DOC, DOCX (Max 5MB)</p>
+                            <input type="file" id="resume-file-input" accept=".pdf,.doc,.docx" style="display: none;">
+                            <button onclick="document.getElementById('resume-file-input').click()" class="btn btn-outline">
+                                <i class="fas fa-folder-open"></i> Browse Files
+                            </button>
+                        </div>
+                        
+                        <div class="upload-progress" id="upload-progress" style="display: none;">
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="progress-fill"></div>
+                            </div>
+                            <p class="progress-text" id="progress-text">Uploading...</p>
+                        </div>
+                        
+                        <div class="current-resume-info" id="current-resume-info">
+                            <h4>Current Resume</h4>
+                            <div class="resume-details">
+                                <p><strong>File:</strong> <span id="current-resume-name">No resume uploaded</span></p>
+                                <p><strong>Size:</strong> <span id="current-resume-size">-</span></p>
+                                <p><strong>Uploaded:</strong> <span id="current-resume-date">-</span></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Resume Stats -->
+            <div class="resume-stats">
+                <div class="stat-item">
+                    <div class="stat-icon">
+                        <i class="fas fa-download"></i>
+                    </div>
+                    <div class="stat-info">
+                        <span class="stat-number" id="download-count">0</span>
+                        <span class="stat-label">Downloads</span>
+                    </div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-icon">
+                        <i class="fas fa-eye"></i>
+                    </div>
+                    <div class="stat-info">
+                        <span class="stat-number" id="view-count">0</span>
+                        <span class="stat-label">Views</span>
+                    </div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-icon">
+                        <i class="fas fa-calendar"></i>
+                    </div>
+                    <div class="stat-info">
+                        <span class="stat-number">2024</span>
+                        <span class="stat-label">Current</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Admin Access Button -->
+            <div class="admin-access">
+                <button onclick="showAdminLogin()" class="admin-btn" title="Admin Access">
+                    <i class="fas fa-cog"></i>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Admin Login Modal -->
+    <div id="admin-login-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Admin Access</h3>
+                <button onclick="closeAdminLogin()" class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="admin-login-form">
+                    <div class="form-group">
+                        <label for="admin-password">Password:</label>
+                        <input type="password" id="admin-password" placeholder="Enter admin password" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Access Admin Panel</button>
+                </form>
+            </div>
+        </div>
+    </div>
 
     <!-- Contact Section -->
     <section id="contact" class="contact">

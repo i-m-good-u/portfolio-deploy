@@ -362,21 +362,326 @@ backToTopButton.addEventListener('click', () => {
     });
 });
 
-// Resume download functionality
+// Resume Management System
+class ResumeManager {
+    constructor() {
+        this.adminPassword = 'your-secure-password-here';
+        this.storageKey = 'portfolio_resume_data';
+        this.init();
+    }
+
+    init() {
+        this.loadResumeData();
+        this.setupEventListeners();
+        this.updateResumeDisplay();
+    }
+
+    loadResumeData() {
+        const data = localStorage.getItem(this.storageKey);
+        this.resumeData = data ? JSON.parse(data) : {
+            fileName: null,
+            fileData: null,
+            uploadDate: null,
+            fileSize: null,
+            downloadCount: 0,
+            viewCount: 0
+        };
+    }
+
+    saveResumeData() {
+        localStorage.setItem(this.storageKey, JSON.stringify(this.resumeData));
+        this.updateResumeDisplay();
+    }
+
+    setupEventListeners() {
+        // File upload
+        const fileInput = document.getElementById('resume-file-input');
+        const uploadArea = document.getElementById('file-upload-area');
+
+        if (fileInput) {
+            fileInput.addEventListener('change', (e) => this.handleFileUpload(e));
+        }
+
+        if (uploadArea) {
+            // Drag and drop functionality
+            uploadArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                uploadArea.classList.add('dragover');
+            });
+
+            uploadArea.addEventListener('dragleave', () => {
+                uploadArea.classList.remove('dragover');
+            });
+
+            uploadArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                uploadArea.classList.remove('dragover');
+                const files = e.dataTransfer.files;
+                if (files.length > 0) {
+                    this.processFile(files[0]);
+                }
+            });
+        }
+
+        // Admin login form
+        const adminForm = document.getElementById('admin-login-form');
+        if (adminForm) {
+            adminForm.addEventListener('submit', (e) => this.handleAdminLogin(e));
+        }
+    }
+
+    handleFileUpload(e) {
+        const file = e.target.files[0];
+        if (file) {
+            this.processFile(file);
+        }
+    }
+
+    processFile(file) {
+        // Validate file
+        const allowedTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+        const maxSize = 5 * 1024 * 1024; // 5MB
+
+        if (!allowedTypes.includes(file.type)) {
+            showNotification('Please upload a PDF, DOC, or DOCX file.', 'error');
+            return;
+        }
+
+        if (file.size > maxSize) {
+            showNotification('File size must be less than 5MB.', 'error');
+            return;
+        }
+
+        // Show upload progress
+        this.showUploadProgress();
+
+        // Convert file to base64 for storage
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            this.resumeData = {
+                fileName: file.name,
+                fileData: e.target.result,
+                uploadDate: new Date().toISOString(),
+                fileSize: file.size,
+                downloadCount: this.resumeData.downloadCount || 0,
+                viewCount: this.resumeData.viewCount || 0
+            };
+
+            this.saveResumeData();
+            this.hideUploadProgress();
+            showNotification('Resume uploaded successfully!', 'success');
+        };
+
+        reader.onerror = () => {
+            this.hideUploadProgress();
+            showNotification('Error uploading file. Please try again.', 'error');
+        };
+
+        reader.readAsDataURL(file);
+    }
+
+    showUploadProgress() {
+        const progressDiv = document.getElementById('upload-progress');
+        const progressFill = document.getElementById('progress-fill');
+        
+        if (progressDiv) {
+            progressDiv.style.display = 'block';
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += 10;
+                if (progressFill) {
+                    progressFill.style.width = progress + '%';
+                }
+                if (progress >= 100) {
+                    clearInterval(interval);
+                }
+            }, 100);
+        }
+    }
+
+    hideUploadProgress() {
+        const progressDiv = document.getElementById('upload-progress');
+        if (progressDiv) {
+            setTimeout(() => {
+                progressDiv.style.display = 'none';
+                const progressFill = document.getElementById('progress-fill');
+                if (progressFill) {
+                    progressFill.style.width = '0%';
+                }
+            }, 500);
+        }
+    }
+
+    updateResumeDisplay() {
+        // Update last updated date
+        const lastUpdatedElement = document.getElementById('resume-last-updated');
+        if (lastUpdatedElement && this.resumeData.uploadDate) {
+            const date = new Date(this.resumeData.uploadDate);
+            lastUpdatedElement.textContent = date.toLocaleDateString();
+        }
+
+        // Update current resume info
+        const nameElement = document.getElementById('current-resume-name');
+        const sizeElement = document.getElementById('current-resume-size');
+        const dateElement = document.getElementById('current-resume-date');
+
+        if (nameElement) {
+            nameElement.textContent = this.resumeData.fileName || 'No resume uploaded';
+        }
+
+        if (sizeElement && this.resumeData.fileSize) {
+            sizeElement.textContent = this.formatFileSize(this.resumeData.fileSize);
+        }
+
+        if (dateElement && this.resumeData.uploadDate) {
+            const date = new Date(this.resumeData.uploadDate);
+            dateElement.textContent = date.toLocaleDateString();
+        }
+
+        // Update stats
+        const downloadCountElement = document.getElementById('download-count');
+        const viewCountElement = document.getElementById('view-count');
+
+        if (downloadCountElement) {
+            downloadCountElement.textContent = this.resumeData.downloadCount || 0;
+        }
+
+        if (viewCountElement) {
+            viewCountElement.textContent = this.resumeData.viewCount || 0;
+        }
+    }
+
+    formatFileSize(bytes) {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    }
+
+    handleAdminLogin(e) {
+        e.preventDefault();
+        const password = document.getElementById('admin-password').value;
+        
+        if (password === this.adminPassword) {
+            this.showAdminSection();
+            this.closeAdminLogin();
+            showNotification('Welcome to admin panel!', 'success');
+        } else {
+            showNotification('Incorrect password!', 'error');
+        }
+    }
+
+    showAdminSection() {
+        const adminSection = document.getElementById('resume-admin-section');
+        if (adminSection) {
+            adminSection.style.display = 'block';
+            adminSection.scrollIntoView({ behavior: 'smooth' });
+        }
+    }
+
+    closeAdminLogin() {
+        const modal = document.getElementById('admin-login-modal');
+        if (modal) {
+            modal.style.display = 'none';
+        }
+        // Clear password field
+        const passwordField = document.getElementById('admin-password');
+        if (passwordField) {
+            passwordField.value = '';
+        }
+    }
+
+    downloadResume() {
+        if (!this.resumeData.fileName || !this.resumeData.fileData) {
+            showNotification('No resume available for download.', 'error');
+            return;
+        }
+
+        // Create download link
+        const link = document.createElement('a');
+        link.href = this.resumeData.fileData;
+        link.download = this.resumeData.fileName;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        // Update download count
+        this.resumeData.downloadCount = (this.resumeData.downloadCount || 0) + 1;
+        this.saveResumeData();
+
+        showNotification('Resume downloaded successfully!', 'success');
+    }
+
+    viewResume() {
+        if (!this.resumeData.fileName || !this.resumeData.fileData) {
+            showNotification('No resume available to view.', 'error');
+            return;
+        }
+
+        // Open in new window
+        const newWindow = window.open('', '_blank');
+        newWindow.document.write(`
+            <html>
+                <head>
+                    <title>${this.resumeData.fileName}</title>
+                    <style>
+                        body { margin: 0; padding: 20px; font-family: Arial, sans-serif; }
+                        iframe { width: 100%; height: 90vh; border: none; }
+                        .header { text-align: center; margin-bottom: 20px; }
+                    </style>
+                </head>
+                <body>
+                    <div class="header">
+                        <h2>${this.resumeData.fileName}</h2>
+                        <p>Guddu Kumar's Resume</p>
+                    </div>
+                    <iframe src="${this.resumeData.fileData}"></iframe>
+                </body>
+            </html>
+        `);
+
+        // Update view count
+        this.resumeData.viewCount = (this.resumeData.viewCount || 0) + 1;
+        this.saveResumeData();
+
+        showNotification('Resume opened in new window!', 'success');
+    }
+}
+
+// Initialize Resume Manager
+const resumeManager = new ResumeManager();
+
+// Global functions for resume functionality
+function downloadCurrentResume() {
+    resumeManager.downloadResume();
+}
+
+function viewResumeOnline() {
+    resumeManager.viewResume();
+}
+
+function showAdminLogin() {
+    const modal = document.getElementById('admin-login-modal');
+    if (modal) {
+        modal.style.display = 'flex';
+    }
+}
+
+function closeAdminLogin() {
+    resumeManager.closeAdminLogin();
+}
+
+function toggleAdminSection() {
+    const adminSection = document.getElementById('resume-admin-section');
+    if (adminSection) {
+        adminSection.style.display = 'none';
+    }
+}
+
+// Legacy download function (for backward compatibility)
 function downloadResume() {
-    // You can replace this with your actual resume URL
-    const resumeUrl = 'https://docs.google.com/document/d/1234567890/export?format=pdf'; // Replace with your Google Drive resume link
-    
-    // For now, we'll show a notification
-    showNotification('Resume download feature coming soon! Please contact me directly for my resume.', 'info');
-    
-    // Uncomment below when you have your resume ready
-    // const link = document.createElement('a');
-    // link.href = resumeUrl;
-    // link.download = 'Guddu_Kumar_Resume.pdf';
-    // document.body.appendChild(link);
-    // link.click();
-    // document.body.removeChild(link);
+    downloadCurrentResume();
 }
 
 console.log('🚀 Portfolio website loaded successfully!');
